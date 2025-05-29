@@ -5,6 +5,8 @@ import PagFlow.component.DeserializedMessage;
 import PagFlow.dto.RequestTopicPayment;
 import PagFlow.entities.PaymentTransaction;
 import PagFlow.repository.PaymentTransactionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class ListenerPayment {
 // This service listens to the Kafka topic "Payment_Topic" and processes incoming payment messages.
 
+    private static final Logger logger = LoggerFactory.getLogger(ListenerPayment.class);
     private final PaymentTransactionRepository paymentRepository;
     private final DeserializedMessage deserializedMessage;
 
@@ -22,10 +25,11 @@ public class ListenerPayment {
 
     @KafkaListener(topics = "Payment_Topic", groupId = "Consumer_PagFlow_Group")
     public void listenTopic(String message) {
-        System.out.println("Message received from topic Payment_Topic: " + message);
+        logger.info("Message received from topic Payment_Topic: {}", message);
+
 
         if (message == null || message.isEmpty()) {
-            System.out.println("Empty message received. Ignoring.");
+            logger.warn("Empty message received. Ignoring.");
             return;
         }
 
@@ -38,7 +42,7 @@ public class ListenerPayment {
 
         paymentRepository.save(paymentTransaction);
 
-        System.out.println("Payment transaction saved: " + paymentTransaction);
+
 
 
     }
