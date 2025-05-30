@@ -21,7 +21,7 @@ public class ListenerPayment {
     public ListenerPayment(DeserializedMessage deserializedMessage, PaymentTransactionRepository paymentRepository) {
         this.deserializedMessage = deserializedMessage;
         this.paymentRepository = paymentRepository;
-    }
+    }     
 
     @KafkaListener(topics = "Payment_Topic", groupId = "Consumer_PagFlow_Group")
     public void listenTopic(String message) {
