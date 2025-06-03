@@ -17,11 +17,15 @@ public class ListenerPayment {
     private static final Logger logger = LoggerFactory.getLogger(ListenerPayment.class);
     private final PaymentTransactionRepository paymentRepository;
     private final DeserializedMessage deserializedMessage;
+    private final PaymentProcessorService paymentProcessorService;
 
-    public ListenerPayment(DeserializedMessage deserializedMessage, PaymentTransactionRepository paymentRepository) {
+    public ListenerPayment(DeserializedMessage deserializedMessage,
+                           PaymentTransactionRepository paymentRepository,
+                           PaymentProcessorService paymentProcessorService) {
         this.deserializedMessage = deserializedMessage;
         this.paymentRepository = paymentRepository;
-    }     
+        this.paymentProcessorService = paymentProcessorService;
+    }
 
     @KafkaListener(topics = "Payment_Topic", groupId = "Consumer_PagFlow_Group")
     public void listenTopic(String message) {
@@ -41,6 +45,15 @@ public class ListenerPayment {
                 requestTopicPayment.getClientName());
 
         paymentRepository.save(paymentTransaction);
+
+
+        if (paymentRepository.existsById(paymentTransaction.getId())) {
+            logger.info("Processing payment transaction with ID {}.", paymentTransaction.getId());
+            paymentProcessorService.processPayment(paymentTransaction.getId());
+        } else {
+            logger.info("Payment transaction with ID {} already exists in the database.", paymentTransaction.getId());
+        }
+
 
 
 
