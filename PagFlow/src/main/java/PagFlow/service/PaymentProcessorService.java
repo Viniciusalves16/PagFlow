@@ -27,9 +27,9 @@ public class PaymentProcessorService {
     public void processPayment(UUID paymentId) {
         try {
             // Simulate processing delay
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(10);
 
-            // Retrieve the payment transaction from the database
+
             Optional<PaymentTransaction> optionalTransaction = paymentRepository.findById(paymentId);
 
             if (optionalTransaction.isPresent()) {
