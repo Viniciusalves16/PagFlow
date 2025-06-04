@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -24,11 +25,10 @@ public class PaymentProcessorService {
     }
 
     @Async
-    public void processPayment(UUID paymentId) {
+    public CompletableFuture<PaymentStatus> processPayment(UUID paymentId) {
         try {
             // Simulate processing delay
             TimeUnit.SECONDS.sleep(10);
-
 
             Optional<PaymentTransaction> optionalTransaction = paymentRepository.findById(paymentId);
 
@@ -37,16 +37,12 @@ public class PaymentProcessorService {
 
                 // Simulate payment success or failure
                 boolean isPaymentSuccessful = ThreadLocalRandom.current().nextBoolean();
-                if (isPaymentSuccessful) {
-                    transaction.setStatus(PaymentStatus.valueOf("COMPLETED"));
-                    logger.info("Payment transaction {} processed successfully.", paymentId);
-                } else {
-                    transaction.setStatus(PaymentStatus.valueOf("FAILED"));
-                    logger.info("Payment transaction {} failed during processing.", paymentId);
-                }
-
-                // Save the updated transaction status
+                PaymentStatus status = isPaymentSuccessful ? PaymentStatus.COMPLETED : PaymentStatus.FAILED;
+                transaction.setStatus(status);
                 paymentRepository.save(transaction);
+
+                logger.info("Payment transaction {} processed with status: {}.", paymentId, status);
+                return CompletableFuture.completedFuture(status);
             } else {
                 logger.warn("Payment transaction with ID {} not found.", paymentId);
             }
@@ -54,5 +50,6 @@ public class PaymentProcessorService {
             logger.error("Error while processing payment transaction {}.", paymentId, e);
             Thread.currentThread().interrupt();
         }
+        return CompletableFuture.completedFuture(null);
     }
 }
