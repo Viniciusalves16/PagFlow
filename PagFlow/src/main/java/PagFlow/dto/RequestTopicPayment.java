@@ -15,7 +15,7 @@ public class RequestTopicPayment {
 
     @JsonProperty("paymentMethod")
     private String paymentMethod;
-  
+      
     @JsonProperty("clientName")
     private String clientName;
 
