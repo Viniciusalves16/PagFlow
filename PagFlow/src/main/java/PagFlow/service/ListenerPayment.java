@@ -56,7 +56,8 @@ public class ListenerPayment {
                 requestTopicPayment.getPaymentId(),
                 requestTopicPayment.getAmount(),
                 requestTopicPayment.getPaymentMethod(),
-                requestTopicPayment.getClientName()
+                requestTopicPayment.getClientName(),
+                requestTopicPayment.getClientEmail()
         );
 
         paymentRepository.save(paymentTransaction);

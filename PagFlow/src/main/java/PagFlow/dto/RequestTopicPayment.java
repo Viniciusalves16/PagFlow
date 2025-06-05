@@ -19,6 +19,9 @@ public class RequestTopicPayment {
     @JsonProperty("clientName")
     private String clientName;
 
+    @JsonProperty("email")
+    private String clientEmail;
+
     public RequestTopicPayment() {}
 
     public RequestTopicPayment(String paymentId, double amount, String paymentMethod, String clientName) {

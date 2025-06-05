@@ -18,6 +18,7 @@ public class PaymentTransaction {
     private BigDecimal amount;
     private String method;
     private String customerName;
+    private String customerEmail;
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
@@ -26,11 +27,12 @@ public class PaymentTransaction {
     public PaymentTransaction() {
     }
 
-    public PaymentTransaction(String paymentId, double amount, String paymentMethod, String clientName) {
+    public PaymentTransaction(String paymentId, double amount, String paymentMethod, String clientName, String clientEmail) {
         this.id = UUID.fromString(paymentId);
         this.amount = BigDecimal.valueOf(amount);
         this.method = paymentMethod;
         this.customerName = clientName;
         this.status = PaymentStatus.PENDING;
+        this.customerEmail = clientEmail;
     }
 }
